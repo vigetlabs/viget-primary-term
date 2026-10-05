@@ -1,0 +1,108 @@
+# Copyright (C) 2026 Viget
+# This file is distributed under the GPL v2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Viget Primary Term 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/viget-primary-term\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-10-05T19:15:25+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: viget-primary-term\n"
+
+#. Plugin Name of the plugin
+#: viget-primary-term.php
+msgid "Viget Primary Term"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: viget-primary-term.php
+msgid "https://github.com/vigetlabs/viget-primary-term"
+msgstr ""
+
+#. Description of the plugin
+#: viget-primary-term.php
+msgid "Lets editors pick a primary term for a post from the block editor's taxonomy panels."
+msgstr ""
+
+#. Author of the plugin
+#: viget-primary-term.php
+msgid "Viget"
+msgstr ""
+
+#. Author URI of the plugin
+#: viget-primary-term.php
+msgid "https://www.viget.com/"
+msgstr ""
+
+#: includes/class-github-plugin-updater.php:237
+msgid "Latest version from GitHub"
+msgstr ""
+
+#: includes/class-github-plugin-updater.php:385
+msgid "No changelog available."
+msgstr ""
+
+#: includes/class-settings.php:99
+msgid "Taxonomies"
+msgstr ""
+
+#: includes/class-settings.php:106
+msgid "Primary term for"
+msgstr ""
+
+#: includes/class-settings.php:145
+#: includes/class-settings.php:146
+#: views/admin/settings.php:15
+msgid "Primary Terms"
+msgstr ""
+
+#. translators: %s: taxonomy slug
+#: includes/class-settings.php:232
+#, php-format
+msgid "Off: the \"%s\" taxonomy is not registered."
+msgstr ""
+
+#: includes/class-settings.php:234
+msgid "Off: this taxonomy is not shown in the block editor."
+msgstr ""
+
+#: views/admin/settings.php:16
+msgid "Checked taxonomies get a primary term select under their panel in the block editor."
+msgstr ""
+
+#: views/admin/taxonomies-field.php:17
+msgid "Registered in code"
+msgstr ""
+
+#: views/admin/taxonomies-field.php:22
+msgid "Enabled"
+msgstr ""
+
+#: views/admin/taxonomies-field.php:23
+msgid "Taxonomy"
+msgstr ""
+
+#: views/admin/taxonomies-field.php:24
+msgid "Post Types"
+msgstr ""
+
+#: views/admin/taxonomies-field.php:25
+msgid "Status"
+msgstr ""
+
+#. translators: %s: Taxonomy singular name, e.g. "Category".
+#: build/editor.js:2
+#, js-format
+msgid "Primary %s"
+msgstr ""
+
+#. translators: %s: Term path, e.g. "Chains › Roller".
+#: build/editor.js:3
+#, js-format
+msgid "Default: %s"
+msgstr ""

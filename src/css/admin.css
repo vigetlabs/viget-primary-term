@@ -1,0 +1,28 @@
+#vgpt-taxonomies-table .check-column {
+	padding-left: 8px;
+}
+
+#vgpt-taxonomies-table .vgpt-icon-cell {
+	width: 20px;
+	text-align: center;
+	vertical-align: middle;
+}
+
+.vgpt-icon-cell .wp-tooltip.vgpt-registered-icon .wp-tooltip__bubble {
+	margin-bottom: 4px;
+	white-space: nowrap;
+}
+
+span.dashicons.vgpt-registered-icon {
+	color: #8c8f94;
+}
+
+.vgpt-row-flagged label {
+	color: #646970;
+	text-decoration: line-through;
+}
+
+.vgpt-row-flagged .vgpt-registered-icon,
+.vgpt-row-flagged .vgpt-registered-icon .dashicons {
+	color: #b32d2e;
+}
