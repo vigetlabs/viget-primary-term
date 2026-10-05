@@ -13,16 +13,16 @@ class CoreTest extends VGPT_TestCase {
 	/**
 	 * Creates a category.
 	 *
-	 * @param string $name   Name.
-	 * @param int    $parent Parent term ID.
+	 * @param string $name      Name.
+	 * @param int    $parent_id Parent term ID.
 	 *
 	 * @return int
 	 */
-	protected function category( string $name, int $parent = 0 ): int {
+	protected function category( string $name, int $parent_id = 0 ): int {
 		return self::factory()->category->create(
 			[
 				'name'   => $name,
-				'parent' => $parent,
+				'parent' => $parent_id,
 			]
 		);
 	}
