@@ -1,0 +1,35 @@
+{
+  "name": "viget/viget-primary-term",
+  "description": "Lets editors pick a primary term for a post from the block editor's taxonomy panels.",
+  "keywords": [
+    "wordpress",
+    "taxonomy",
+    "primary-term",
+    "primary-category"
+  ],
+  "type": "wordpress-plugin",
+  "homepage": "https://github.com/vigetlabs/viget-primary-term",
+  "license": "GPL-2.0-or-later",
+  "authors": [
+    {
+      "name": "Viget",
+      "homepage": "https://viget.com/"
+    }
+  ],
+  "require": {
+    "composer/installers": "^1.0 || ^2.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.6",
+    "yoast/phpunit-polyfills": "^4.0"
+  },
+  "config": {
+    "sort-packages": true,
+    "allow-plugins": {
+      "composer/installers": true
+    },
+    "platform": {
+      "php": "8.2"
+    }
+  }
+}

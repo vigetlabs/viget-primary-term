@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Composer
+composer.phar
+
+# Distributable zip output
+/dist/
+*.zip
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+
+# wp-env
+.wp-env.override.json
+
+# PHPUnit
+.phpunit.result.cache

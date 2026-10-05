@@ -1,0 +1,50 @@
+{
+  "name": "viget-primary-term",
+  "version": "1.0.0",
+  "description": "Lets editors pick a primary term for a post from the block editor's taxonomy panels.",
+  "author": "Viget",
+  "license": "GPL-2.0-or-later",
+  "files": [
+    "build",
+    "includes",
+    "views",
+    "languages",
+    "viget-primary-term.php",
+    "uninstall.php",
+    "readme.txt",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "wp-scripts build",
+    "start": "wp-scripts start",
+    "lint:css": "wp-scripts lint-style",
+    "lint:js": "wp-scripts lint-js",
+    "format": "wp-scripts format",
+    "plugin-zip": "wp-scripts plugin-zip",
+    "packages-update": "wp-scripts packages-update",
+    "env:start": "wp-env start",
+    "env:stop": "wp-env stop",
+    "test": "wp-env run tests-cli --env-cwd=wp-content/plugins/viget-primary-term -- vendor/bin/phpunit -c phpunit.xml.dist",
+    "update-pot": "wp-env run cli wp i18n make-pot wp-content/plugins/viget-primary-term wp-content/plugins/viget-primary-term/languages/viget-primary-term.pot --exclude=src,node_modules,tests,bin",
+    "version": "node bin/sync-version.js && git add viget-primary-term.php readme.txt",
+    "postversion": "git push && git push --tags",
+    "release": "npm version"
+  },
+  "devDependencies": {
+    "@wordpress/env": "^11.15.0",
+    "@wordpress/scripts": "^35.0.0",
+    "typescript": "^6.0.3",
+    "webpack-remove-empty-scripts": "^1.1.1"
+  },
+  "dependencies": {
+    "@wordpress/components": "^41.0.0",
+    "@wordpress/compose": "^8.9.0",
+    "@wordpress/core-data": "^8.1.0",
+    "@wordpress/data": "^10.56.0",
+    "@wordpress/editor": "^15.1.0",
+    "@wordpress/element": "^8.8.0",
+    "@wordpress/hooks": "^4.56.0",
+    "@wordpress/html-entities": "^4.56.0",
+    "@wordpress/i18n": "^6.29.0"
+  }
+}

@@ -1,0 +1,143 @@
+<?xml version="1.0"?>
+<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Viget Primary Term" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/PHPCSStandards/PHP_CodeSniffer/master/phpcs.xsd">
+
+	<description>A custom set of rules to check for the Viget Primary Term plugin</description>
+
+	<!--
+	#############################################################################
+	COMMAND LINE ARGUMENTS
+	https://github.com/PHPCSStandards/PHP_CodeSniffer/wiki/Annotated-Ruleset
+	#############################################################################
+	-->
+
+	<file>.</file>
+
+	<!-- Exclude WP Core folders and files from being checked. -->
+	<exclude-pattern>/wp-admin/*</exclude-pattern>
+	<exclude-pattern>/wp-includes/*</exclude-pattern>
+	<exclude-pattern>/wp-*.php</exclude-pattern>
+	<exclude-pattern>/index.php</exclude-pattern>
+	<exclude-pattern>/xmlrpc.php</exclude-pattern>
+
+	<!-- Exclude the Composer Vendor directory. -->
+	<exclude-pattern>/vendor/*</exclude-pattern>
+
+	<!-- Exclude the Node Modules directory. -->
+	<exclude-pattern>/node_modules/*</exclude-pattern>
+
+	<!-- Exclude the compiled build output. -->
+	<exclude-pattern>/build/*</exclude-pattern>
+
+	<!-- Exclude minified Javascript files. -->
+	<exclude-pattern>*.min.js</exclude-pattern>
+
+	<!-- Strip the filepaths down to the relevant bit. -->
+	<arg name="basepath" value="."/>
+
+	<!-- Check up to 8 files simultaneously. -->
+	<arg name="parallel" value="8"/>
+
+	<!-- Only check PHP files; JS/CSS are linted separately via wp-scripts (eslint/stylelint). -->
+	<arg name="extensions" value="php"/>
+
+
+	<!--
+	#############################################################################
+	SET UP THE RULESETS
+	#############################################################################
+	-->
+
+	<rule ref="WordPress">
+		<exclude name="Generic.Arrays.DisallowShortArraySyntax"/>
+		<exclude name="Universal.Arrays.DisallowShortArraySyntax"/>
+	</rule>
+
+	<!-- Core builds and escapes tooltip markup itself. Escaping it again strips the popover attributes. -->
+	<rule ref="WordPress.Security.EscapeOutput">
+		<properties>
+			<property name="customAutoEscapedFunctions" type="array">
+				<element value="wp_get_tooltip"/>
+			</property>
+		</properties>
+	</rule>
+
+	<!-- Include the WordPress-Extra standard. -->
+	<rule ref="WordPress-Extra">
+		<exclude name="Generic.Arrays.DisallowShortArraySyntax"/>
+		<exclude name="Universal.Arrays.DisallowShortArraySyntax"/>
+	</rule>
+
+	<!-- Let's also check that everything is properly documented. -->
+	<rule ref="WordPress-Docs"/>
+
+	<!-- Add in some extra rules from other standards. -->
+	<rule ref="Generic.Commenting.Todo"/>
+
+
+	<!--
+	#############################################################################
+	SNIFF SPECIFIC CONFIGURATION
+	#############################################################################
+	-->
+
+	<config name="minimum_wp_version" value="6.5"/>
+
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="viget-primary-term"/>
+			</property>
+		</properties>
+	</rule>
+
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties>
+			<property name="prefixes" type="array">
+				<element value="Viget\PrimaryTerm"/>
+				<element value="VGPT_"/>
+				<element value="vgpt"/>
+			</property>
+		</properties>
+	</rule>
+
+
+	<!--
+	#############################################################################
+	SELECTIVE EXCLUSIONS
+	Exclude specific files for specific sniffs and/or exclude sub-groups in sniffs.
+	#############################################################################
+	-->
+
+	<!--
+	View templates are `require`d into a method's local scope, but PHPCS's static
+	analysis treats their top-level variables as if they were true PHP globals.
+	Exclude the two sniffs that misfire on that pattern for files under /views/.
+	-->
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<exclude-pattern>/views/*</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.WP.GlobalVariablesOverride">
+		<exclude-pattern>/views/*</exclude-pattern>
+	</rule>
+
+	<!--
+	PHPUnit test classes follow PHPUnit's own naming convention (e.g. CoreTest.php /
+	class CoreTest), not WordPress's "class-{name}.php" / plugin-prefix conventions,
+	since they're never loaded outside the test suite.
+	-->
+	<rule ref="WordPress.Files.FileName">
+		<exclude-pattern>/tests/*</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<exclude-pattern>/tests/*</exclude-pattern>
+	</rule>
+
+	<!--
+	Test method docblocks conventionally lead with the method-under-test's exact
+	(lowercase) name, e.g. "get_mappings() drops entries missing a taxonomy."
+	-->
+	<rule ref="Generic.Commenting.DocComment.ShortNotCapital">
+		<exclude-pattern>/tests/*</exclude-pattern>
+	</rule>
+
+</ruleset>
