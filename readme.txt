@@ -34,5 +34,8 @@ When a post has more than one term in a taxonomy, a "Primary {Term}" select appe
 
 == Changelog ==
 
+= Unreleased =
+* Renamed a test helper's `$parent` parameter, a reserved keyword PHPCS warns on, so CI passes. Tests only, no change to the plugin.
+
 = 1.0.0 =
 * Initial release.

@@ -13,7 +13,7 @@ Guidance for AI assistants working in this repo. Tool-agnostic, so Claude Code, 
 
 To cut a release:
 
-1. Add a `= X.Y.Z =` section at the top of the Changelog in `readme.txt` describing the release. Do this **first** - `bin/sync-version.js` refuses to run without it, and nothing is written when it fails.
+1. Add a `= X.Y.Z =` section at the top of the Changelog in `readme.txt` describing the release, or rename `= Unreleased =` if changes are already waiting there. Do this **first** - `bin/sync-version.js` refuses to run without it, and nothing is written when it fails.
 2. Run `npm run release -- patch` (or `minor` / `major`).
 
 That bumps `package.json`, runs `bin/sync-version.js`, commits, tags `vX.Y.Z`, and pushes. The tag triggers `.github/workflows/release.yaml`, which builds the zip and publishes the GitHub release that the plugin's updater reads.
