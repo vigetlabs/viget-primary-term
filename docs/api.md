@@ -14,7 +14,7 @@ $term = vgpt()->get_primary_term( $post_id, 'category' );
 
 ### `get_taxonomies(): string[]`
 
-Taxonomies with a primary term: registered in code first, then saved on the settings page. Taxonomies that don't exist are left out. Passes through `vgpt_taxonomies`.
+Taxonomies with a primary term: registered in code first, then saved on the settings page. Passes through `vgpt_taxonomies`. Taxonomies that don't exist are left out, before and after the filter.
 
 ### `get_registered_taxonomies(): string[]`
 
@@ -31,6 +31,14 @@ The enabled taxonomies a post type uses.
 ### `get_meta_key( string $taxonomy ): string`
 
 The post meta key that stores a taxonomy's primary term ID: `_vgpt_primary_{taxonomy}`.
+
+### `clear_removed_primary_term( int $object_id, array $tt_ids, string $taxonomy ): void`
+
+Runs on `deleted_term_relationships`. Clears a post's primary term when that term is removed from the post, however it's removed (editor, Quick Edit, REST, `wp_set_object_terms()`).
+
+### `init_updater(): void`
+
+Loads the GitHub updater. Runs on `admin_init`, or on `init` during cron and WP-CLI, so front-end requests skip it.
 
 ### Constants
 
@@ -57,7 +65,7 @@ add_filter(
 
 ### `vgpt_taxonomies`
 
-Filters the resolved taxonomies from `get_taxonomies()`.
+Filters the resolved taxonomies from `get_taxonomies()`. Slugs that aren't registered taxonomies are dropped after it runs.
 
 ### `vgpt_default_term`
 

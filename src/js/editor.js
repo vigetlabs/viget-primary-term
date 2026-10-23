@@ -10,7 +10,7 @@ import { createHigherOrderComponent } from '@wordpress/compose';
 import { store as coreStore } from '@wordpress/core-data';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { store as editorStore } from '@wordpress/editor';
-import { useEffect } from '@wordpress/element';
+import { useEffect, useRef } from '@wordpress/element';
 import { addFilter } from '@wordpress/hooks';
 import { decodeEntities } from '@wordpress/html-entities';
 import { __, sprintf } from '@wordpress/i18n';
@@ -47,70 +47,71 @@ function getPaths( terms, parents ) {
 function PrimaryTermSelect( { slug } ) {
 	const { singular, metaKey } = taxonomies[ slug ];
 
-	const { isReady, isHierarchical, termIds, terms, parents, primary } =
-		useSelect(
-			( select ) => {
-				const { getTaxonomy, getEntityRecords, getEntityRecord } =
-					select( coreStore );
-				const { getEditedPostAttribute } = select( editorStore );
-				const taxonomy = getTaxonomy( slug );
-				const ids = taxonomy
-					? getEditedPostAttribute( taxonomy.rest_base ) || EMPTY
-					: EMPTY;
+	const { isHierarchical, termIds, terms, parents, primary } = useSelect(
+		( select ) => {
+			const { getTaxonomy, getEntityRecords, getEntityRecord } =
+				select( coreStore );
+			const { getEditedPostAttribute } = select( editorStore );
+			const taxonomy = getTaxonomy( slug );
+			const ids = taxonomy
+				? getEditedPostAttribute( taxonomy.rest_base ) || EMPTY
+				: EMPTY;
 
-				// Queried by ID, so a term added from the panel shows up right away.
-				const checked = ids.length
-					? getEntityRecords( 'taxonomy', slug, {
-							...FIELDS,
-							include: ids,
-							per_page: -1,
-						} ) || EMPTY
-					: EMPTY;
+			// Queried by ID, so a term added from the panel shows up right away.
+			const checked = ids.length
+				? getEntityRecords( 'taxonomy', slug, {
+						...FIELDS,
+						include: ids,
+						per_page: -1,
+					} ) || EMPTY
+				: EMPTY;
 
-				const ancestors = {};
+			const ancestors = {};
 
-				for ( const term of checked ) {
-					for (
-						let parent = term.parent;
-						parent && ! ancestors[ parent ];
-						parent = ancestors[ parent ]?.parent
-					) {
-						const record = getEntityRecord(
-							'taxonomy',
-							slug,
-							parent,
-							FIELDS
-						);
+			for ( const term of checked ) {
+				for (
+					let parent = term.parent;
+					parent && ! ancestors[ parent ];
+					parent = ancestors[ parent ]?.parent
+				) {
+					const record = getEntityRecord(
+						'taxonomy',
+						slug,
+						parent,
+						FIELDS
+					);
 
-						if ( ! record ) {
-							break;
-						}
-
-						ancestors[ parent ] = record;
+					if ( ! record ) {
+						break;
 					}
-				}
 
-				return {
-					isReady: !! taxonomy,
-					isHierarchical: !! taxonomy?.hierarchical,
-					termIds: ids,
-					terms: checked,
-					parents: ancestors,
-					primary: getEditedPostAttribute( 'meta' )?.[ metaKey ] || 0,
-				};
-			},
-			[ slug, metaKey ]
-		);
+					ancestors[ parent ] = record;
+				}
+			}
+
+			return {
+				isHierarchical: !! taxonomy?.hierarchical,
+				termIds: ids,
+				terms: checked,
+				parents: ancestors,
+				primary: getEditedPostAttribute( 'meta' )?.[ metaKey ] || 0,
+			};
+		},
+		[ slug, metaKey ]
+	);
 
 	const { editPost } = useDispatch( editorStore );
 	const isChecked = termIds.includes( primary );
+	const wasChecked = useRef( false );
 
-	// Clear a primary term that's been unchecked. Waits for the taxonomy so loading never dirties the post.
+	// Clear the primary term once it's unchecked. A stale one on load is left alone, so loading never dirties the post.
 	useEffect( () => {
-		if ( isReady && primary && ! isChecked ) {
+		if ( wasChecked.current && ! isChecked ) {
 			editPost( { meta: { [ metaKey ]: 0 } } );
 		}
-	}, [ isReady, primary, isChecked, metaKey, editPost ] );
+
+		wasChecked.current = isChecked;
+	}, [ isChecked, metaKey, editPost ] );
 
 	const options = getPaths(
 		terms.filter( ( term ) => termIds.includes( term.id ) ),
