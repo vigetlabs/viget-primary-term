@@ -73,20 +73,54 @@ class Core {
 		// Load dependencies.
 		require_once VGPT_PLUGIN_PATH . 'includes/class-settings.php';
 		require_once VGPT_PLUGIN_PATH . 'includes/class-editor.php';
-		require_once VGPT_PLUGIN_PATH . 'includes/class-github-plugin-updater.php';
 
 		// Initialize dependencies.
 		$this->settings = Settings::get_instance();
 		$this->editor   = Editor::get_instance();
 
-		// Check for plugin updates from GitHub releases.
+		add_action( 'deleted_term_relationships', [ $this, 'clear_removed_primary_term' ], 10, 3 );
+
+		// Check for plugin updates from GitHub releases. Cron and WP-CLI check without admin_init.
+		add_action( wp_doing_cron() || ( \defined( 'WP_CLI' ) && WP_CLI ) ? 'init' : 'admin_init', [ $this, 'init_updater' ] );
+	}
+
+	/**
+	 * Loads the GitHub updater, only where update checks run.
+	 *
+	 * @return void
+	 */
+	public function init_updater(): void {
+		require_once VGPT_PLUGIN_PATH . 'includes/class-github-plugin-updater.php';
+
 		new GitHub_Plugin_Updater( VGPT_PLUGIN_FILE, 'vigetlabs', 'viget-primary-term' );
+	}
+
+	/**
+	 * Clears a post's primary term when that term is removed from the post.
+	 *
+	 * @param int    $object_id Object ID.
+	 * @param int[]  $tt_ids    Removed term taxonomy IDs.
+	 * @param string $taxonomy  Taxonomy slug.
+	 *
+	 * @return void
+	 */
+	public function clear_removed_primary_term( int $object_id, array $tt_ids, string $taxonomy ): void {
+		if ( ! \in_array( $taxonomy, $this->get_taxonomies(), true ) ) {
+			return;
+		}
+
+		$meta_key = $this->get_meta_key( $taxonomy );
+		$primary  = get_term( (int) get_post_meta( $object_id, $meta_key, true ), $taxonomy );
+
+		if ( $primary instanceof \WP_Term && \in_array( $primary->term_taxonomy_id, array_map( 'intval', $tt_ids ), true ) ) {
+			delete_post_meta( $object_id, $meta_key );
+		}
 	}
 
 	/**
 	 * Gets every taxonomy with a primary term: registered in code first, then saved on the settings page.
 	 *
-	 * Taxonomies that don't exist are left out.
+	 * Taxonomies that don't exist are left out, including any added by the `vgpt_taxonomies` filter.
 	 *
 	 * @return string[]
 	 */
@@ -103,7 +137,9 @@ class Core {
 		 *
 		 * @param string[] $taxonomies Taxonomy slugs.
 		 */
-		return apply_filters( 'vgpt_taxonomies', $taxonomies );
+		$taxonomies = (array) apply_filters( 'vgpt_taxonomies', $taxonomies );
+
+		return array_values( array_filter( $taxonomies, fn( $taxonomy ) => \is_string( $taxonomy ) && taxonomy_exists( $taxonomy ) ) );
 	}
 
 	/**

@@ -38,6 +38,27 @@ class CoreTest extends VGPT_TestCase {
 	}
 
 	/**
+	 * get_taxonomies() leaves out missing taxonomies added by the vgpt_taxonomies filter.
+	 */
+	public function test_get_taxonomies_filter_drops_missing_taxonomies() {
+		$this->registered = [ 'category' ];
+
+		add_filter(
+			'vgpt_taxonomies',
+			static function ( array $taxonomies ): array {
+				$taxonomies[] = 'missing_taxonomy';
+				return $taxonomies;
+			}
+		);
+
+		$this->assertSame( [ 'category' ], vgpt()->get_taxonomies() );
+
+		// Warned on get_taxonomy( 'missing_taxonomy' )->object_type before.
+		$this->register_meta();
+		$this->assertArrayHasKey( vgpt()->get_meta_key( 'category' ), get_registered_meta_keys( 'post', 'post' ) );
+	}
+
+	/**
 	 * get_registered_taxonomies() sanitizes and de-duplicates the filter's slugs.
 	 */
 	public function test_get_registered_taxonomies_sanitizes() {
@@ -150,5 +171,41 @@ class CoreTest extends VGPT_TestCase {
 		update_post_meta( $post, vgpt()->get_meta_key( 'category' ), $chains );
 
 		$this->assertSame( $chains, vgpt()->get_primary_term( $post, 'category' )->term_id, 'A saved primary term skips the filter.' );
+	}
+
+	/**
+	 * Removing the primary term from a post clears it, so re-adding the term later doesn't bring it back.
+	 */
+	public function test_removing_primary_term_clears_it() {
+		$this->registered = [ 'category' ];
+
+		$chains = $this->category( 'Chains' );
+		$roller = $this->category( 'Roller' );
+		$post   = self::factory()->post->create();
+		$key    = vgpt()->get_meta_key( 'category' );
+
+		wp_set_object_terms( $post, [ $chains, $roller ], 'category' );
+		update_post_meta( $post, $key, $chains );
+
+		wp_set_object_terms( $post, [ $chains ], 'category' );
+		$this->assertSame( $chains, (int) get_post_meta( $post, $key, true ), 'Removing another term keeps it.' );
+
+		wp_set_object_terms( $post, [ $roller ], 'category' );
+		$this->assertFalse( metadata_exists( 'post', $post, $key ) );
+
+		wp_set_object_terms( $post, [ $chains, $roller ], 'category' );
+		$this->assertNull( vgpt()->get_primary_term( $post, 'category', false ) );
+
+		update_post_meta( $post, $key, $roller );
+		wp_remove_object_terms( $post, $roller, 'category' );
+		$this->assertFalse( metadata_exists( 'post', $post, $key ) );
+	}
+
+	/**
+	 * The updater loads on admin_init, not on every request.
+	 */
+	public function test_updater_loads_on_admin_init() {
+		$this->assertSame( 10, has_action( 'admin_init', [ vgpt(), 'init_updater' ] ) );
+		$this->assertFalse( has_action( 'init', [ vgpt(), 'init_updater' ] ) );
 	}
 }
