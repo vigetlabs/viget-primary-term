@@ -34,7 +34,12 @@ When a post has more than one term in a taxonomy, a "Primary {Term}" select appe
 
 == Changelog ==
 
-= Unreleased =
+= 1.0.1 =
+* Fixed PHP warnings on every request when `vgpt_taxonomies` adds a slug that isn't a registered taxonomy.
+* Removing a post's primary term outside the editor (Quick Edit, REST, `wp_set_object_terms()`) now clears it, so it doesn't come back if the term is re-added later.
+* Opening a post with a stale primary term no longer marks it as changed.
+* The GitHub updater only loads in wp-admin, cron and WP-CLI, not on every front-end request.
+* `composer.json` requires PHP 8.2+.
 * Renamed a test helper's `$parent` parameter, a reserved keyword PHPCS warns on, so CI passes. Tests only, no change to the plugin.
 
 = 1.0.0 =
