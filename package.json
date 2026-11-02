@@ -45,6 +45,6 @@
     "@wordpress/element": "^8.8.0",
     "@wordpress/hooks": "^4.56.0",
     "@wordpress/html-entities": "^4.56.0",
-    "@wordpress/i18n": "^6.29.0"
+    "@wordpress/i18n": "^7.0.0"
   }
 }
